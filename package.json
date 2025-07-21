@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "node scripts/deploy-website.mjs"
   },
   "dependencies": {
+    "@ardrive/turbo-sdk": "^1.28.3",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/client": "6.11.1",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -22,6 +24,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.0",
     "@vela-ventures/aosync-sdk-react": "^1.0.30",
+    "arweave": "^1.15.7",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -29,6 +32,7 @@
     "embla-carousel-react": "^8.1.8",
     "framer-motion": "^11.3.21",
     "lucide-react": "^0.417.0",
+    "mime-types": "^3.0.1",
     "motion": "^12.18.1",
     "next": "^14.2.30",
     "next-themes": "^0.3.0",

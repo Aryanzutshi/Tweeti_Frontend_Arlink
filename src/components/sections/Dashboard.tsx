@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { connectWallet } from "@/lib/arutils";
+import ToneSettingsModal from "../tone-modal"
 
 interface Post {
   id: string;
@@ -25,8 +26,8 @@ interface Stats {
 }
 
 interface ToneSettings {
-  style: string[];
-  tone: string[];
+  style: string;
+  tone: string;
   audience: string;
   formality: string;
   length: string;
@@ -54,8 +55,8 @@ export default function Dashboard() {
   >("scheduled");
 
   const [toneSettings, setToneSettings] = useState<ToneSettings>({
-    style: [],
-    tone: [],
+    style: "Minimal",
+    tone: "Neutral",
     audience: "General",
     formality: "Professional",
     length: "Medium",
@@ -67,7 +68,7 @@ export default function Dashboard() {
     targetEngagement: "Likes",
     industry: "Technology",
     hashtagStyle: "Minimal",
-  });
+  });  
 
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -132,11 +133,11 @@ export default function Dashboard() {
         prevPosts.map((post) =>
           post.id === editingPost.id
             ? {
-                ...post,
-                content: editPostContent,
-                scheduledFor: editPostSchedule,
-                status: editPostStatus,
-              }
+              ...post,
+              content: editPostContent,
+              scheduledFor: editPostSchedule,
+              status: editPostStatus,
+            }
             : post
         )
       );
@@ -148,7 +149,7 @@ export default function Dashboard() {
 
     const github_username = localStorage.getItem("username");
     if (github_username) {
-      fetch("http://localhost:3000/set_tone", {
+      fetch(`process.env.API_BASE_URL`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -186,11 +187,10 @@ export default function Dashboard() {
                 <button
                   key={item.name}
                   onClick={() => handleTabClick(item.name)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
-                    activeTab === item.name
-                      ? "bg-purple-600 text-white"
-                      : "hover:bg-gray-100 text-gray-900"
-                  }`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${activeTab === item.name
+                    ? "bg-purple-600 text-white"
+                    : "hover:bg-gray-100 text-gray-900"
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.name}
@@ -271,7 +271,7 @@ export default function Dashboard() {
           </main>
         </div>
 
-        {showToneModal && (
+        {/* {showToneModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="w-[480px] bg-white rounded-2xl shadow-2xl p-6 max-h-[80vh] overflow-y-auto">
               <h2 className="text-lg font-bold text-black mb-4">Tone & Style Settings</h2>
@@ -281,7 +281,9 @@ export default function Dashboard() {
                   <label className="block text-sm text-gray-900 mb-1">Audience:</label>
                   <select
                     value={toneSettings.audience}
-                    onChange={(e) => setToneSettings((prev) => ({ ...prev, audience: e.target.value }))}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, audience: e.target.value }))
+                    }
                     className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
                   >
                     <option>General</option>
@@ -294,7 +296,9 @@ export default function Dashboard() {
                   <label className="block text-sm text-gray-900 mb-1">Brand Voice:</label>
                   <select
                     value={toneSettings.brandVoice}
-                    onChange={(e) => setToneSettings((prev) => ({ ...prev, brandVoice: e.target.value }))}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, brandVoice: e.target.value }))
+                    }
                     className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
                   >
                     <option>Authentic</option>
@@ -307,7 +311,9 @@ export default function Dashboard() {
                   <label className="block text-sm text-gray-900 mb-1">Emotional Tone:</label>
                   <select
                     value={toneSettings.emotionalTone}
-                    onChange={(e) => setToneSettings((prev) => ({ ...prev, emotionalTone: e.target.value }))}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, emotionalTone: e.target.value }))
+                    }
                     className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
                   >
                     <option>Neutral</option>
@@ -320,12 +326,122 @@ export default function Dashboard() {
                   <label className="block text-sm text-gray-900 mb-1">Formality:</label>
                   <select
                     value={toneSettings.formality}
-                    onChange={(e) => setToneSettings((prev) => ({ ...prev, formality: e.target.value }))}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, formality: e.target.value }))
+                    }
                     className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
                   >
                     <option>Casual</option>
                     <option>Professional</option>
                     <option>Formal</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Length:</label>
+                  <select
+                    value={toneSettings.length}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, length: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>Short</option>
+                    <option>Medium</option>
+                    <option>Long</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Keywords:</label>
+                  <input
+                    type="text"
+                    value={toneSettings.keywords}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, keywords: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                    placeholder="Comma-separated"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Content Type:</label>
+                  <select
+                    value={toneSettings.contentType}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, contentType: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>Educational</option>
+                    <option>Promotional</option>
+                    <option>Inspirational</option>
+                    <option>News</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Call to Action:</label>
+                  <select
+                    value={toneSettings.callToAction}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, callToAction: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>None</option>
+                    <option>Visit Website</option>
+                    <option>Sign Up</option>
+                    <option>Learn More</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Target Engagement:</label>
+                  <select
+                    value={toneSettings.targetEngagement}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, targetEngagement: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>Likes</option>
+                    <option>Comments</option>
+                    <option>Saves</option>
+                    <option>Shares</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Industry:</label>
+                  <select
+                    value={toneSettings.industry}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, industry: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>Technology</option>
+                    <option>Healthcare</option>
+                    <option>Finance</option>
+                    <option>Education</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-900 mb-1">Hashtag Style:</label>
+                  <select
+                    value={toneSettings.hashtagStyle}
+                    onChange={(e) =>
+                      setToneSettings((prev) => ({ ...prev, hashtagStyle: e.target.value }))
+                    }
+                    className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-black"
+                  >
+                    <option>Minimal</option>
+                    <option>Heavy</option>
+                    <option>Branded</option>
+                    <option>Trending</option>
                   </select>
                 </div>
 
@@ -346,8 +462,16 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
+
       </div>
+      <ToneSettingsModal
+        showToneModal={showToneModal}
+        setShowToneModal={setShowToneModal}
+        toneSettings={toneSettings}
+        setToneSettings={setToneSettings}
+      />
     </div>
   );
 }
+
